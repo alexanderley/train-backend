@@ -31,28 +31,36 @@ router.get("/getStations", async (req, res) => {
   }
 });
 
-// #todo split this into two routes: arrivals and departures, like in swagger
-// https://editor.swagger.io/
-router.get("/getTrains", async (req, res) => {
+router.get("/arrivals/:stationId", async (req, res) => {
   try {
-    // const { station } = req.query;
-    const station = "8010389";
+    const { stationId } = req.params;
     const duration = 1;
-    if (!station) {
-      return res.status(400).json({ error: "Station parameter is required" });
-    }
 
-    const arrivals = await client.arrivals(station, {
-      results: 2,
-      duration: duration,
-    });
-    const departures = await client.departures(station, {
+    const arrivals = await client.arrivals(stationId, {
       results: 2,
       duration: duration,
     });
     res.status(200).json({
       message: "Train data fetched successfully",
-      data: { arrivals, departures },
+      data: { arrivals },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+router.get("/departures/:stationId", async (req, res) => {
+  try {
+    const { stationId } = req.params;
+    const duration = 1;
+
+    const departures = await client.departures(stationId, {
+      results: 2,
+      duration: duration,
+    });
+    res.status(200).json({
+      message: "Train data fetched successfully",
+      data: { departures },
     });
   } catch (err) {
     console.error(err);
