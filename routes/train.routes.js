@@ -34,7 +34,7 @@ router.get("/getStations", async (req, res) => {
 router.get("/arrivals/:stationId", async (req, res) => {
   try {
     const { stationId } = req.params;
-    const duration = 1;
+    const duration = 60;
 
     const arrivals = await client.arrivals(stationId, {
       results: 2,
@@ -52,7 +52,7 @@ router.get("/arrivals/:stationId", async (req, res) => {
 router.get("/departures/:stationId", async (req, res) => {
   try {
     const { stationId } = req.params;
-    const duration = 1;
+    const duration = 60;
 
     const departures = await client.departures(stationId, {
       results: 2,
