@@ -11,19 +11,25 @@ const router = express.Router();
 
 router.get("/getStations", async (req, res) => {
   try {
-    console.log("fetching trains data...");
-    // # Todo just show stations, not stops
-    const locations = await client.locations("Hauptbahnhof", {
-      results: 10,
-    });
+    const { query } = req.query;
 
-    // We don't want bus stops, just train stations
+    if (!query || typeof query !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Missing or invalid query parameter" });
+    }
+
+    console.log("Fetching stations for query:", query);
+
+    const locations = await client.locations(query, { results: 10 });
+
+    // Nur Bahnhöfe, keine Bushaltestellen
     const stations = locations.filter((loc) => loc.type === "station");
 
     res.status(200).json({
       amount: stations.length,
-      message: "Train data fetched successfully",
-      data: stations,
+      message: "Stations fetched successfully",
+      stations,
     });
   } catch (err) {
     console.error(err);
@@ -34,12 +40,8 @@ router.get("/getStations", async (req, res) => {
 router.get("/arrivals/:stationId", async (req, res) => {
   try {
     const { stationId } = req.params;
-    const duration = 60;
 
-    const arrivals = await client.arrivals(stationId, {
-      results: 2,
-      duration: duration,
-    });
+    const arrivals = await client.arrivals(stationId);
     res.status(200).json({
       message: "Train data fetched successfully",
       data: { arrivals },
@@ -49,15 +51,12 @@ router.get("/arrivals/:stationId", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 router.get("/departures/:stationId", async (req, res) => {
   try {
     const { stationId } = req.params;
-    const duration = 60;
 
-    const departures = await client.departures(stationId, {
-      results: 2,
-      duration: duration,
-    });
+    const departures = await client.departures(stationId);
     res.status(200).json({
       message: "Train data fetched successfully",
       data: { departures },
