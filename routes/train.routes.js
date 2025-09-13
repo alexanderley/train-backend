@@ -9,9 +9,9 @@ import client from "../client/vendoClient.js";
 
 const router = express.Router();
 
-router.get("/getStations", async (req, res) => {
+router.get("/getStations/:query", async (req, res) => {
   try {
-    const { query } = req.query;
+    const { query } = req.params;
 
     if (!query || typeof query !== "string") {
       return res
