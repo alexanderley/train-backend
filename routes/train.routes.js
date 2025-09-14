@@ -19,8 +19,6 @@ router.get("/getStations/:query", async (req, res) => {
         .json({ error: "Missing or invalid query parameter" });
     }
 
-    console.log("Fetching stations for query:", query);
-
     const locations = await client.locations(query, { results: 10 });
 
     // Nur Bahnhöfe, keine Bushaltestellen
